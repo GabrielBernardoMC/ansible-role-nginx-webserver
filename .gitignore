@@ -2,3 +2,4 @@
 inventory
 setup-webserver.yml
 ansible.cfg
+requirements.*
