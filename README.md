@@ -1,38 +1,52 @@
-Role Name
+Nginx Webserver
 =========
 
-A brief description of the role goes here.
+This role can be used to setup a Nginx Webserver with cerbot already included.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+none
 
 Role Variables
 --------------
-
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
-
+```yaml
+---
+domain: domain.com      # The domain of your DNS.
+subdomain: subdomain    # The subdomain of your DNS A record.
+root: /var/www/html     # defines the path to the webserver root dir
+proxy_pass_port: "80"   # defines a port for a proxy_pass if needed    
+server_alias:           # if you want to add more A and/or CNAME records as aliases
+  - www.subdomain.domain.com
+  - subdomain2.domain.com
+  - www.subdomain2.domain.com
+```
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+[GeerlingGuy's Cerbot Role](https://github.com/geerlingguy/ansible-role-certbot) -  already included on the nginx webserver role dependencies
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+```yaml
+---
+- hosts: host
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
-
+  roles:
+    - name: nginx_webserver
+      vars:
+        domain: domain.com
+        subdomain: subdomain
+        admin_email: 'mail@domain.com'
+        root: /var/www/html
+```
 License
 -------
 
-BSD
+MIT
 
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+[Gabriel Bernardo](https://github.com/gabrielbernardomc)
