@@ -1,0 +1,9 @@
+#basic templates be used pby the playbook. Customize at will.
+
+server {
+    listen 80;
+
+    server_name {{ client_a_name }};
+    add_header Strict-Transport-Security "max-age=63072000" always;
+    return 301 https://$host$request_uri;
+}

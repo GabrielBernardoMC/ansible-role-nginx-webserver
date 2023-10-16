@@ -1,0 +1,81 @@
+---
+- name: assertion test for required variables
+  ansible.builtin.assert:
+    that:
+      - domain is defined
+      - subdomain is defined
+      - webserver_admin_address is defined
+    msg: "'subdomain' and 'domain' and 'webserver_admin_address' are required"
+
+- name: Set A record variable
+  ansible.builtin.set_fact:
+    client_a_name: '{{ subdomain }}.{{ domain }}'
+
+- name: Set base records variable
+  ansible.builtin.set_fact:
+    main_records: "{{ ([client_a_name,'www.' + client_a_name]) if has_c_name_record is defined and (has_c_name_record | bool) else [client_a_name] }}"
+
+- name: Set webserver records variable
+  ansible.builtin.set_fact:
+    webserver_records: "{{ (main_records + additional_records) if additional_records is defined else main_records }}"
+
+- name: Check if certificate already exists.
+  ansible.builtin.stat:
+    path: /etc/letsencrypt/live/{{ webserver_records | first | replace('*.', '') }}/cert.pem
+  register: local_letsencrypt_cert_first_check
+
+- name: Install dependencies
+  ansible.builtin.apt:
+    name:
+      - nginx
+      - python3-certbot-nginx
+    update_cache: yes
+    cache_valid_time: 3600
+  notify: restart nginx
+
+- name: Setup CertBot
+  ansible.builtin.include_role:
+    name: geerlingguy.certbot
+  vars:
+    certbot_admin_email: '{{ webserver_admin_address }}'
+    certbot_create_if_missing: true
+    certbot_create_standalone_stop_services: []
+    certbot_create_command: "{{ certbot_script }} certonly --nginx --noninteractive --agree-tos --email {{ cert_item.email | default(certbot_admin_email) }} -d {{ cert_item.domains | join(',') }}"
+    certbot_certs:
+      - domains: '{{ webserver_records }}'
+    certbot_auto_renew: true
+    certbot_auto_renew_user: root
+    certbot_auto_renew_hour: "3"
+    certbot_auto_renew_minute: "30"
+    certbot_auto_renew_options: "--quiet --no-self-upgrade"
+  when: "domain != 'localhost'"
+
+- name: Set nginx VirtualHost
+  ansible.builtin.template:
+    src: templates/virtualhost.conf.j2
+    dest: /etc/nginx/sites-available/{{ subdomain }}.conf
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+  notify: reload nginx
+
+- name: Set nginx SSL VirtualHost
+  ansible.builtin.template:
+    src: templates/virtualhost-le-ssl.conf.j2
+    dest: /etc/nginx/sites-available/{{ subdomain }}-le-ssl.conf
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+  notify: reload nginx
+
+- name: Enable sites
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/{{ item }}.conf
+    dest: /etc/nginx/sites-enabled/{{ item }}.conf
+    owner: root
+    group: root
+    state: link
+  with_items:
+    - '{{ subdomain }}'
+    - '{{ subdomain }}-le-ssl'
+  notify: reload nginx

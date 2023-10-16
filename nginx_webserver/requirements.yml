@@ -1,0 +1,6 @@
+---
+roles:
+  - name: geerlingguy.certbot
+    src: https://github.com/geerlingguy/ansible-role-certbot.git
+    scm: git
+    version: 5.1.0

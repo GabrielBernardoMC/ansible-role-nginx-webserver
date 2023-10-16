@@ -1,0 +1,33 @@
+#basic templates be used pby the playbook. Customize at will.
+
+server {
+    listen 443 ssl;
+
+    server_name {{ client_a_name }};
+    
+    {% if document_root is defined -%}
+    root {{ document_root }};
+    {% endif %}
+    
+    location / {
+    
+        {% if proxy_pass_port is defined -%}
+        proxy_pass http://localhost:{{ proxy_pass_port }};
+        {% endif %}
+    
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    server_tokens off;
+    ssl_prefer_server_ciphers on;
+    ssl_certificate     /etc/letsencrypt/live/{{ client_a_name }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/{{ client_a_name }}/privkey.pem;
+    ssl_protocols       TLSv1.3 TLSv1.2 TLSv1.1;
+    add_header Strict-Transport-Security "max-age=63072000" always;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+
+}

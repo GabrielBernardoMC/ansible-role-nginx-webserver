@@ -1,0 +1,16 @@
+galaxy_info:
+  author: Gabriel Bernardo 
+  description: Nginx Webserver configuration
+  license: "license (MIT)"
+
+  min_ansible_version: "2.1"
+
+  galaxy_tags:
+    - nginx
+    - Webserver
+
+dependencies: 
+   - role: geerlingguy.certbot
+     src: https://github.com/geerlingguy/ansible-role-certbot.git
+     scm: git
+     version: 5.1.0
