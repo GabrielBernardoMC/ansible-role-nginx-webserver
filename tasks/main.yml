@@ -5,8 +5,7 @@
       - domain is defined
       - subdomain is defined
       - admin_email is defined
-      - root or proxy_pass_port is defined
-    msg: "'subdomain' and 'domain' and 'admin_email' and 'root' or 'proxy_pass_port' are required"
+    msg: "'subdomain' and 'domain' and 'admin_email' are required"
 
 - name: Set A record variable
   ansible.builtin.set_fact:
