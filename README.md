@@ -16,7 +16,7 @@ domain: domain.com      # The domain of your DNS.
 subdomain: subdomain    # The subdomain of your DNS A record.
 root: /var/www/html     # defines the path to the webserver root dir
 proxy_pass_port: "80"   # defines a port for a proxy_pass if needed    
-server_alias:           # if you want to add more A and/or CNAME records as aliases
+server_aliases:           # if you want to add more A and/or CNAME records as aliases
   - www.subdomain.domain.com
   - subdomain2.domain.com
   - www.subdomain2.domain.com
