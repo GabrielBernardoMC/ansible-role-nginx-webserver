@@ -53,7 +53,7 @@
 - name: Set nginx SSL VirtualHost
   ansible.builtin.template:
     src: templates/virtualhost-le-ssl.conf.j2
-    dest: /etc/nginx/sites-available/{{ subdomain }}-le-ssl.conf
+    dest: /etc/nginx/sites-available/{{ subdomain }}.{{ domain }}-le-ssl.conf
     owner: root
     group: root
     mode: u=rw,g=r,o=r
@@ -67,5 +67,5 @@
     group: root
     state: link
   with_items:
-    - '{{ subdomain }}-le-ssl'
+    - '{{ subdomain }}.{{ domain }}-le-ssl'
   notify: reload nginx
