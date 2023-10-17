@@ -1,12 +1,16 @@
-#basic templates be used pby the playbook. Customize at will.
+#basic template be used pby the playbook. Customize at will.
 
 server {
     listen 443 ssl;
 
     server_name {{ client_a_name }};
     
-    {% if document_root is defined -%}
-    root {{ document_root }};
+    {% if server_aliases is defined -%}{% for server_alias in server_aliases -%}
+	server_name {{ server_alias }}; #ALIAS
+	{% endfor %}{% endif %} 
+    
+    {% if root is defined -%}
+    root {{ root }};
     {% endif %}
     
     location / {
