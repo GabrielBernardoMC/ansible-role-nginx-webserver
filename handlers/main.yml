@@ -5,3 +5,10 @@
       - nginx
       - -s
       - reload
+
+- name: restart nginx
+  ansible.builtin.command:
+    argv:
+      - systemctl
+      - restart
+      - nginx
