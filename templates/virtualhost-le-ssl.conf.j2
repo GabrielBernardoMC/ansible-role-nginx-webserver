@@ -1,13 +1,9 @@
-#basic template be used pby the playbook. Customize at will.
+#basic template be used by the playbook. Customize at will.
 
 server {
     listen 443 ssl;
 
     server_name {{ client_a_name }};
-    
-    {% if server_aliases is defined -%}{% for server_alias in server_aliases -%}
-	server_name {{ server_alias }}; #ALIAS
-	{% endfor %}{% endif %} 
     
     {% if root is defined -%}
     root {{ root }};
@@ -33,5 +29,4 @@ server {
     ssl_protocols       TLSv1.3 TLSv1.2 TLSv1.1;
     add_header Strict-Transport-Security "max-age=63072000" always;
     ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
-
 }
