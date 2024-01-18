@@ -11,17 +11,9 @@
   ansible.builtin.set_fact:
     client_a_name: '{{ subdomain }}.{{ domain }}'
 
-- name: Set base records variable
-  ansible.builtin.set_fact:
-    main_records: "{{ ([client_a_name]) }}"
-
-- name: Set webserver records variable
-  ansible.builtin.set_fact:
-    webserver_records: "{{ (main_records + server_aliases) }}"
-
 - name: Check if certificate already exists.
   ansible.builtin.stat:
-    path: /etc/letsencrypt/live/{{ webserver_records | first | replace('*.', '') }}/cert.pem
+    path: /etc/letsencrypt/live/{{ client_a_name | first | replace('*.', '') }}/cert.pem
   register: local_letsencrypt_cert_first_check
 
 - name: Install dependencies
@@ -42,7 +34,7 @@
     certbot_create_standalone_stop_services: []
     certbot_create_command: "{{ certbot_script }} certonly --nginx --noninteractive --agree-tos --email {{ cert_item.email | default(certbot_admin_email) }} -d {{ cert_item.domains | join(',') }}"
     certbot_certs:
-      - domains: '{{ webserver_records }}'
+      - domains: '{{ client_a_name }}'
     certbot_auto_renew: true
     certbot_auto_renew_user: root
     certbot_auto_renew_hour: "3"
