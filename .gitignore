@@ -2,7 +2,6 @@
 inventory
 setup-webserver.yml
 ansible.cfg
-requirements.*
 init.sh
 Vagrantfile
 .virtualenv
